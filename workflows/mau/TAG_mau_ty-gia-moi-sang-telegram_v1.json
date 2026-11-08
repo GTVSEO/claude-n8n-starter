@@ -1,0 +1,185 @@
+{
+  "name": "TAG_mau_ty-gia-moi-sang-telegram_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## TAG · Đọc trước\n**Workflow mẫu của Guideline \"n8n cho người mới bắt đầu\"** (The AI Growth, 09/2026).\n**Làm gì:** Mỗi sáng lấy tỷ giá → lọc → báo Telegram (demo Schedule + HTTP).\n**Cách dùng:** mở từng node đỏ, chọn credential của bạn (OpenRouter / Google Sheets / Telegram). Bấm Execute step từng node trước khi Publish.\n**Nguồn:** Vincent Do dựng cho khoá AI Agent Cho Doanh Nghiệp. Dùng nội bộ cho học viên.",
+        "height": 260,
+        "width": 460,
+        "color": 6
+      },
+      "id": "tag-note",
+      "name": "TAG · Đọc trước",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "b1",
+      "name": "8h sáng thứ 2–6",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://open.er-api.com/v6/latest/USD",
+        "options": {}
+      },
+      "id": "b2",
+      "name": "Gọi API tỷ giá",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "x1",
+              "name": "usd_vnd",
+              "value": "={{ Math.round($json.rates.VND) }}",
+              "type": "number"
+            },
+            {
+              "id": "x2",
+              "name": "cap_nhat",
+              "value": "={{ $json.time_last_update_utc }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3",
+      "name": "Lấy trường cần dùng",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f1",
+              "leftValue": "={{ $json.usd_vnd }}",
+              "rightValue": 26000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b4",
+      "name": "Chỉ báo khi > 26.000",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "=💵 USD/VND hôm nay: {{ $json.usd_vnd.toLocaleString(\"vi-VN\") }}\nCập nhật: {{ $json.cap_nhat }}",
+        "additionalFields": {}
+      },
+      "id": "b5",
+      "name": "Gửi Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "8h sáng thứ 2–6": {
+      "main": [
+        [
+          {
+            "node": "Gọi API tỷ giá",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gọi API tỷ giá": {
+      "main": [
+        [
+          {
+            "node": "Lấy trường cần dùng",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lấy trường cần dùng": {
+      "main": [
+        [
+          {
+            "node": "Chỉ báo khi > 26.000",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chỉ báo khi > 26.000": {
+      "main": [
+        [
+          {
+            "node": "Gửi Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "n8n-local": {
+      "type": "http",
+      "url": "http://localhost:5678/mcp-server/http",
+      "headersHelper": "sh n8n/mcp-headers.sh"
+    }
+  }
+}

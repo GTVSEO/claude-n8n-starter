@@ -1,0 +1,210 @@
+{
+  "name": "TAG_mau_tro-ly-tu-van-khoa-hoc_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## TAG · Đọc trước\n**Workflow mẫu của Guideline \"n8n cho người mới bắt đầu\"** (The AI Growth, 09/2026).\n**Làm gì:** Trợ lý tư vấn khoá học (demo AI Agent).\n**Cách dùng:** mở từng node đỏ, chọn credential của bạn (OpenRouter / Google Sheets / Telegram). Bấm Execute step từng node trước khi Publish.\n**Nguồn:** Vincent Do dựng cho khoá AI Agent Cho Doanh Nghiệp. Dùng nội bộ cho học viên.",
+        "height": 260,
+        "width": 460,
+        "color": 6
+      },
+      "id": "tag-note",
+      "name": "TAG · Đọc trước",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "n1",
+      "name": "Khi có tin nhắn chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "tag-demo-chat-1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# Vai trò\nBạn là trợ lý tư vấn khoá học của The AI Growth (TAG). Bạn nói chuyện với khách đang tìm hiểu khoá \"AI Agent Cho Doanh Nghiệp\".\n\n# Bối cảnh\n- TAG là trường dạy ứng dụng AI cho chủ doanh nghiệp và marketer tại Việt Nam.\n- Khoá \"AI Agent Cho Doanh Nghiệp\" dạy dựng trợ lý AI và workflow n8n cho việc thật: content, sales, CSKH, vận hành.\n- Học online, tự học theo video + guideline, có nhóm hỗ trợ.\n\n# Việc bạn được làm\n1. Trả lời câu hỏi về nội dung khoá, ai nên học, cần chuẩn bị gì.\n2. Khi khách hỏi giá theo USD hoặc muốn quy đổi tiền: dùng tool tra_ty_gia rồi tính bằng tool Calculator.\n3. Trước khi trả lời câu hỏi khó, dùng tool Think để sắp xếp ý.\n\n# Luật\n- Không tự bịa giá, ưu đãi, ngày khai giảng. Không có dữ liệu thì nói \"mình chưa có thông tin này\" và mời khách để lại số điện thoại.\n- Không hứa kết quả kinh doanh, không cam kết hoàn tiền.\n- Trả lời tiếng Việt, xưng \"mình\", gọi khách là \"bạn\". Tối đa 5 câu mỗi lượt.\n\n# Định dạng trả lời\n- Câu đầu trả lời thẳng. Sau đó tối đa 3 gạch đầu dòng nếu cần.\n- Kết thúc bằng một câu hỏi để hiểu nhu cầu khách hơn."
+        }
+      },
+      "id": "n2",
+      "name": "AI Agent — Trợ lý tư vấn",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4.1-mini",
+        "options": {}
+      },
+      "id": "n3",
+      "name": "OpenRouter Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        200,
+        240
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "name": "OpenRouter — TAG demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "n4",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "n5",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        540,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "n6",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        680,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Tra tỷ giá USD sang VND hiện tại. Gọi tool này khi khách hỏi giá theo USD hoặc muốn quy đổi tiền. Kết quả trả về JSON, lấy trường rates.VND.",
+        "url": "https://open.er-api.com/v6/latest/USD",
+        "options": {}
+      },
+      "id": "n7",
+      "name": "tra_ty_gia",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Cách đọc workflow này\n1. **Khi có tin nhắn chat** = trigger. Mở khung chat bằng nút *Open chat* ở dưới canvas.\n2. **AI Agent** = bộ não. System Message nằm trong Options của node này.\n3. Ba loại \"chân tay\" nối vào agent: **Chat Model** (đầu óc), **Memory** (nhớ hội thoại), **Tools** (việc agent được làm).\n\nThử hỏi: \"Khoá này hợp với ai?\" rồi \"1.000 USD là bao nhiêu tiền Việt?\"",
+        "height": 280,
+        "width": 420,
+        "color": 4
+      },
+      "id": "n8",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -340
+      ]
+    }
+  ],
+  "connections": {
+    "Khi có tin nhắn chat": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tra_ty_gia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent — Trợ lý tư vấn",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

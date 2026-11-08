@@ -1,0 +1,23 @@
+# n8n chạy trên máy bằng Docker. Claude đọc file này khi cài, bật lại, cập nhật.
+# Cập nhật: đổi số phiên bản ở dòng image, sao lưu trước, rồi chạy lại "up -d".
+# Cổng chỉ mở cho máy này (127.0.0.1). Muốn mở ra mạng thì hỏi người dùng trước.
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.46.6
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=Asia/Ho_Chi_Minh
+      - TZ=Asia/Ho_Chi_Minh
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:

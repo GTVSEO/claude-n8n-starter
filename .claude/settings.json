@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(docker --version)",
+      "Bash(docker version*)",
+      "Bash(docker info*)",
+      "Bash(docker ps*)",
+      "Bash(docker compose version*)",
+      "Bash(docker compose -f n8n/compose.yml *)",
+      "Bash(docker logs n8n*)",
+      "Bash(docker exec n8n n8n *)",
+      "Bash(docker cp workflows/*)",
+      "Bash(docker cp n8n:*)",
+      "Bash(curl -s http://localhost:5678/*)",
+      "Bash(curl -sS http://localhost:5678/*)",
+      "Bash(lsof -nP -iTCP:5678 *)",
+      "Bash(open -a Docker)",
+      "Bash(open http://localhost:5678*)",
+      "PowerShell(docker --version)",
+      "PowerShell(docker version*)",
+      "PowerShell(docker info*)",
+      "PowerShell(docker ps*)",
+      "PowerShell(docker compose version*)",
+      "PowerShell(docker compose -f n8n/compose.yml *)",
+      "PowerShell(docker logs n8n*)",
+      "PowerShell(docker exec n8n n8n *)",
+      "PowerShell(docker cp workflows/*)",
+      "PowerShell(docker cp n8n:*)",
+      "PowerShell(curl.exe -s http://localhost:5678/*)",
+      "PowerShell(curl.exe -sS http://localhost:5678/*)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(Get-CimInstance *)",
+      "PowerShell(wsl --status)",
+      "PowerShell(winget --version)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Bash(sudo *)"
+    ],
+    "ask": [
+      "Bash(docker compose * down -v*)",
+      "Bash(docker volume rm *)",
+      "Bash(docker system prune*)",
+      "PowerShell(docker compose * down -v*)",
+      "PowerShell(docker volume rm *)",
+      "PowerShell(docker system prune*)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "enabledMcpjsonServers": [
+    "n8n-local"
+  ],
+  "enabledPlugins": {
+    "n8n-skills@n8n-io": true
+  },
+  "extraKnownMarketplaces": {
+    "n8n-io": {
+      "source": {
+        "source": "github",
+        "repo": "n8n-io/skills"
+      }
+    }
+  }
+}
